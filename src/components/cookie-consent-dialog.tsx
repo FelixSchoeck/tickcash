@@ -1,3 +1,4 @@
+// components/cookie-consent-dialog.tsx
 "use client";
 
 import {
@@ -7,10 +8,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useConsent } from "@/lib/useConsent";
+import { useConsentStore } from "@/lib/consent-store";
 
 export function CookieConsentDialog() {
-  const { hasDecided, grant, deny } = useConsent();
+  const hasDecided = useConsentStore((s) => s.hasDecided);
+  const grant = useConsentStore((s) => s.grant);
+  const deny = useConsentStore((s) => s.deny);
 
   return (
     <Dialog open={!hasDecided}>
@@ -19,14 +22,14 @@ export function CookieConsentDialog() {
           <DialogTitle>Cookie-Erlaubnis</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">
-          Diese App kann deinen Stundenlohn und Sessions im lokalen Speicher
-          sichern, um deine Fortschritte zu merken. Möchtest du das erlauben?
+          Möchtest du erlauben, dass wir deinen Stundenlohn & Sessions lokal
+          speichern?
         </p>
         <div className="flex justify-end gap-4 mt-4">
           <Button variant="outline" onClick={deny}>
-            Nein, jedes Mal fragen
+            Nein
           </Button>
-          <Button onClick={grant}>Ja, speichern</Button>
+          <Button onClick={grant}>Ja</Button>
         </div>
       </DialogContent>
     </Dialog>

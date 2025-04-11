@@ -22,7 +22,7 @@ export function useConsent() {
 
   const deny = () => {
     setConsent(null); // kein Storage
-    setHasDecided(true); // Dialog schließen
+    setHasDecided(true); // ❗ wichtig: Dialog schließen, Logik triggern
   };
 
   return { consent, hasDecided, grant, deny };

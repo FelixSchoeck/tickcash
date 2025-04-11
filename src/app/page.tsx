@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CookieConsentDialog } from "@/components/cookie-consent-dialog";
 import { useConsent } from "@/lib/useConsent";
+import { useConsentStore } from "@/lib/consent-store";
 
 interface Session {
   start: string;
@@ -27,7 +28,9 @@ export default function Home() {
   const [showDialog, setShowDialog] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [showSessions, setShowSessions] = useState(false);
-  const { consent } = useConsent();
+  const consent = useConsentStore((state) => state.consent);
+  const hasDecided = useConsentStore((state) => state.hasDecided);
+  const loadConsent = useConsentStore((state) => state.load);
 
   const goals = [
     { label: "☕ Kaffee", amount: 3.5 },
@@ -37,8 +40,13 @@ export default function Home() {
     { label: "🏨 Hotelnacht", amount: 70 },
   ];
 
-  // Lade wage und sessions aus localStorage
   useEffect(() => {
+    loadConsent(); // Zustand initial laden
+  }, []);
+
+  useEffect(() => {
+    if (!hasDecided) return;
+
     if (consent === "granted") {
       const savedWage = localStorage.getItem("wage");
       if (savedWage) {
@@ -51,10 +59,11 @@ export default function Home() {
       if (savedSessions) {
         setSessions(JSON.parse(savedSessions));
       }
-    } else if (consent === "denied") {
+    } else {
+      // consent === null → abgelehnt oder noch nie erteilt
       setShowDialog(true);
     }
-  }, [consent]);
+  }, [consent, hasDecided]);
 
   // Live-Berechnung
   useEffect(() => {
@@ -71,6 +80,20 @@ export default function Home() {
 
     return () => clearInterval(interval);
   }, [isRunning, startTime, wage]);
+
+  useEffect(() => {
+    if (consent && wage === 0 && !showDialog) {
+      const savedWage = localStorage.getItem("wage");
+      if (!savedWage) {
+        setShowDialog(true);
+      }
+    }
+  }, [consent]);
+
+  useEffect(() => {
+    console.log("Consent status:", consent);
+    console.log("Has decided:", hasDecided);
+  }, [consent, hasDecided]);
 
   const startTracking = () => {
     setStartTime(new Date());
@@ -167,6 +190,12 @@ export default function Home() {
               onClick={() => setShowSessions(!showSessions)}
             >
               Sessions ansehen
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => console.log("has decided: " + hasDecided)}
+            >
+              debug
             </Button>
             <Button variant="ghost" onClick={handleChangeWage}>
               Lohn ändern
