@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CookieConsentDialog } from "@/components/cookie-consent-dialog";
-import { useConsent } from "@/lib/useConsent";
 import { useConsentStore } from "@/lib/consent-store";
 
 interface Session {
