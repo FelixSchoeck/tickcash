@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useConsent } from "@/lib/useConsent";
 
 export function CookieConsentDialog() {
-  const { consent, hasDecided, grant, deny } = useConsent();
+  const { hasDecided, grant, deny } = useConsent();
 
   return (
     <Dialog open={!hasDecided}>
