@@ -190,12 +190,6 @@ export default function Home() {
             >
               Sessions ansehen
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => console.log("has decided: " + hasDecided)}
-            >
-              debug
-            </Button>
             <Button variant="ghost" onClick={handleChangeWage}>
               Lohn ändern
             </Button>
